@@ -2,19 +2,13 @@ import Image from "next/image";
 import SearchForm from "@/components/SearchForm";
 import StartupCard from "@/components/StartupCard";
 
+import { STARTUPS_QUERY } from "@/lib/queries";
+import { sanityFetch, SanityLive } from "@/sanity/lib/live";
+
 
 export default async function Home({searchParams}) {
   const query = (await searchParams).query;
-  const posts = [{
-    _createdAt: new Date(),
-    views: 55,
-    author: {_id: 1, name: "Paul McCartney"},
-    _id: 1,
-    description: "This is a description",
-    image: "https://i.imgur.com/uJJjsJ8.jpeg",
-    category: "Music",
-    title: "John Lennon"
-  }]
+  const {data: posts} = await sanityFetch({query: STARTUPS_QUERY})
   return (
     <>
      <section className="pink_container">
@@ -42,6 +36,8 @@ export default async function Home({searchParams}) {
           )}
         </ul>
      </section>
+
+     <SanityLive />
     </>
   );
 }
