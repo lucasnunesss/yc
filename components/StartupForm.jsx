@@ -5,33 +5,58 @@ import { Textarea } from './ui/textarea'
 import MDEditor from '@uiw/react-md-editor'
 import { Button } from './ui/button'
 import { Send } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import {  useForm } from 'react-hook-form'
 import { isValidUrl, warningMsg } from '@/lib/utils'
+import { useToast } from '@/hooks/use-toast'
+import { useRouter } from 'next/navigation'
 const StartupForm = () => {
-
+  const router = useRouter()
   const [pitch, setPitch] = useState("")
+  const {toast} = useToast()
   const form = useForm({
     defaultValues: {
       title: "",
       description: "",
       category: "",
-      link: ""
+      link: "",
+      pitchForm: ""
     }
   });
 
   
-  const {register, handleSubmit, formState} = form
-  const {errors: errorState} = formState
+  const {register, handleSubmit, formState, getValues, reset} = form
+  const {errors: errorState, isSubmitSuccessful} = formState
 
 
   const [errors, setErrors] = useState({
     
   })
-  const handleFormSubmit = (data) => {
-     console.log("oioioi")
+  const handleFormSubmit = async(data) => {
+     try {
+        const formValues = {
+          title: getValues("title"),
+          description: getValues("description"),
+          category: getValues("category"),
+          link: getValues("link"),
+        }
+
+        console.log("Post bem sucedido", formValues)
+      
+     } catch (error) {
+
+     } finally {
+
+     }
 
   
   }
+
+  useEffect(() => {
+    if(isSubmitSuccessful){
+      reset()
+      setPitch("")
+    }
+  }, [isSubmitSuccessful, reset])
 
   // Por enquanto não vou usar isso
   const [state, formAction, isPending] = useActionState(handleFormSubmit, {
@@ -39,8 +64,13 @@ const StartupForm = () => {
     status: "INITIAL"
   })
 
-  console.log()
-  
+  if(errorState.title){
+    toast({
+      title: "Error",
+      description: "bla bla bla",
+      variant: "destructive"
+    })
+  }
   return (
    <form onSubmit={handleSubmit(handleFormSubmit)} className='startup-form'>
       <div>
@@ -125,20 +155,24 @@ const StartupForm = () => {
 
       <div data-color-mode="light">
         <label htmlFor="pitch" className='startup-form_label'>Pitch</label>
-        <MDEditor value={pitch} onChange={(value) => setPitch(value)}
+        <MDEditor  value={pitch} onChange={(value) => setPitch(value)}
             id='pitch'
             preview='edit'
             height={300}
             style={{borderRadius: 20, overflow: "hidden"}}
             textareaProps={{
-              placeholder: "Briefly describe your idea and what problem it solves"
+              placeholder: "Briefly describe your idea and what problem it solves",
+              minLength: 10
             }}
             previewOptions={{
               disallowedElements: ["style"]
             }}
+
+   
+            
         />
 
-        {errors.pitch && <p className='startup-form_error'>{errors.pitch}</p>}
+        {errorState?.pitchForm && <p className='startup-form_error'>{errorState?.pitchForm?.message}</p>}
       </div>
 
       <Button type="submit" className="startup-form_btn text-white"  >
