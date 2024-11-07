@@ -25,7 +25,7 @@ const StartupForm = () => {
 
   
   const {register, handleSubmit, formState, getValues, reset} = form
-  const {errors: errorState, isSubmitSuccessful} = formState
+  const {errors: errorState, isSubmitSuccessful, isDirty, isValid, isSubmitting, isValidating} = formState
 
 
   const [errors, setErrors] = useState({
@@ -175,8 +175,8 @@ const StartupForm = () => {
         {errorState?.pitchForm && <p className='startup-form_error'>{errorState?.pitchForm?.message}</p>}
       </div>
 
-      <Button type="submit" className="startup-form_btn text-white"  >
-        {isPending ? 'Submitting...' : 'Submit your pitch'}
+      <Button type="submit" className="startup-form_btn text-white" disabled={!isValid || !isDirty} >
+        {isSubmitting || isValidating ? 'Submitting...' : 'Submit your pitch'}
             <Send className='size-6 ml-2' />
       </Button>
    </form>
