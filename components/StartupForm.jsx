@@ -7,26 +7,36 @@ import { Button } from './ui/button'
 import { Send } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 const StartupForm = () => {
-  const [errors, setErrors] = useState({})
+
   const [pitch, setPitch] = useState("")
   const form = useForm({
     defaultValues: {
       title: ""
     }
   });
+
+  
   const {register, handleSubmit, formState} = form
-  const {errors: error} = formState
+  const {errors: errorState} = formState
+
+
+  const [errors, setErrors] = useState({
+    
+  })
   const handleFormSubmit = (data) => {
-      console.log(data)
+      setErrors({...errors, title: errorState?.title?.type})
+
+  
   }
 
+  // Por enquanto não vou usar isso
   const [state, formAction, isPending] = useActionState(handleFormSubmit, {
     error: "",
     status: "INITIAL"
   })
 
-
-  console.log("erro no titulo", error.title)
+  console.log()
+  
   return (
    <form onSubmit={handleSubmit(handleFormSubmit)} className='startup-form'>
       <div>
@@ -35,11 +45,16 @@ const StartupForm = () => {
           required: true,
           minLength: {
             value: 3,
+            message: "Small title"
           },
-          maxLength: 100,
+
+          maxLength: {
+            value: 100,
+            message: "Title to big"
+          },
         })} />
 
-        {error.title && <p className='startup-form_error'>123453355353</p>}
+        {errorState.title && <p className='startup-form_error'>{errorState.title?.message}</p>}
       </div>
 
       <div>
