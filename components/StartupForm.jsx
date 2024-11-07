@@ -1,15 +1,23 @@
 "use client"
-import { useActionState, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
 import MDEditor from '@uiw/react-md-editor'
 import { Button } from './ui/button'
 import { Send } from 'lucide-react'
+import { useForm } from 'react-hook-form'
 const StartupForm = () => {
   const [errors, setErrors] = useState({})
   const [pitch, setPitch] = useState("")
-  const handleFormSubmit = () => {
-
+  const form = useForm({
+    defaultValues: {
+      title: ""
+    }
+  });
+  const {register, handleSubmit, formState} = form
+  const {errors: error} = formState
+  const handleFormSubmit = (data) => {
+      console.log(data)
   }
 
   const [state, formAction, isPending] = useActionState(handleFormSubmit, {
@@ -17,13 +25,21 @@ const StartupForm = () => {
     status: "INITIAL"
   })
 
+
+  console.log("erro no titulo", error.title)
   return (
-   <form action={() => {}} className='startup-form'>
+   <form onSubmit={handleSubmit(handleFormSubmit)} className='startup-form'>
       <div>
         <label htmlFor="title" className='startup-form_label'>Title</label>
-        <Input id="title" name="title" className="startup-form_input" required placeholder="Startup Title" />
+        <Input id="title" name="title" className="startup-form_input" required placeholder="Startup Title" {...register("title", {
+          required: true,
+          minLength: {
+            value: 3,
+          },
+          maxLength: 100,
+        })} />
 
-        {errors.title && <p className='startup-form_error'>{errors.title}</p>}
+        {error.title && <p className='startup-form_error'>123453355353</p>}
       </div>
 
       <div>
