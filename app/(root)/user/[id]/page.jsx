@@ -2,8 +2,10 @@ import { auth } from '@/auth';
 import { AUTHOR_BY_GITHUB_ID_QUERY, AUTHOR_BY_ID_QUERY } from '@/lib/queries';
 import { client } from '@/sanity/lib/client';
 import { notFound } from 'next/navigation';
-import React from 'react'
+import React, { Suspense } from 'react'
 import Image from 'next/image';
+import UserStartups from '@/components/UserStartups';
+import { StartupCardSkeleton } from '@/components/StartupCard';
 
 export const experimental_ppr = true;
 
@@ -43,6 +45,10 @@ const Page = async({params}) => {
       <ul className='card_grid-sm'>
           {/* TODO: ADD USER_STARTUPS 
            -- PRECISA SER DINAMICO AQUI */}
+           <Suspense fallback={<StartupCardSkeleton />}>
+              <UserStartups  id={id} />
+
+           </Suspense>
       </ul>
 
       </div>

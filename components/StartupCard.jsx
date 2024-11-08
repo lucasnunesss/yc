@@ -4,8 +4,10 @@ import Link from 'next/link'
 import React from 'react'
 import Image from 'next/image'
 import { Button } from './ui/button'
+import { Skeleton } from './ui/skeleton'
+import { cn } from '@/lib/utils'
 const StartupCard = ({post}) => {
-  const {_createdAt, views, author: {_id: authorId, name}, title, category, _id, image, description} = post
+  const {_createdAt, views, author: {_id: authorId, name, image: authorImage}, title, category, _id, image, description} = post
 
   return (
     <li className='startup-card group'>
@@ -30,7 +32,7 @@ const StartupCard = ({post}) => {
             </Link>
         </div>
             <Link href={`/user/${authorId}`}>
-              <Image src="https://placehold.co/48x48" alt='placeholder' width={48} height={48}
+              <Image src={authorImage} alt='placeholder' width={48} height={48}
                 className='rounded-full'
               />
             </Link>
@@ -57,5 +59,15 @@ const StartupCard = ({post}) => {
     </li>
   )
 }
+
+export const StartupCardSkeleton = () => (
+  <>
+    {[0,1,2,3,4].map((index) => (
+      <li key={cn("skeleton", index)}>
+          <Skeleton className="startup-card_skeleton" />
+      </li>
+    ))}
+  </>
+)
 
 export default StartupCard
