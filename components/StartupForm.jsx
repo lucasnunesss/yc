@@ -9,6 +9,7 @@ import {  useForm } from 'react-hook-form'
 import { isValidUrl, warningMsg } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 import { useRouter } from 'next/navigation'
+import { createPitch } from '@/lib/actions'
 const StartupForm = () => {
   const router = useRouter()
   const [pitch, setPitch] = useState("")
@@ -23,7 +24,7 @@ const StartupForm = () => {
     }
   });
 
-  
+
   const {register, handleSubmit, formState, getValues, reset} = form
   const {errors: errorState, isSubmitSuccessful, isDirty, isValid, isSubmitting, isValidating} = formState
 
@@ -39,11 +40,27 @@ const StartupForm = () => {
           category: getValues("category"),
           link: getValues("link"),
         }
+      
+      const result = await createPitch(formValues, pitch)
+ 
+      if(result.status === "SUCCESS"){
+        toast({
+          title: "Success",
+          description: "Your startup pitch has been created successfully"
+        });
+        
+       
+        router.push(`/startup/${result._id}`)
+      }
 
-        console.log("Post bem sucedido", formValues)
+      return result;
       
      } catch (error) {
-
+        toast({
+          title: "Error",
+          description: "An unexpected error has occurred",
+          variant: "destructive"
+        })
      } finally {
 
      }
@@ -64,13 +81,13 @@ const StartupForm = () => {
     status: "INITIAL"
   })
 
-  if(errorState.title){
-    toast({
-      title: "Error",
-      description: "bla bla bla",
-      variant: "destructive"
-    })
-  }
+  // if(errorState.title){
+  //   toast({
+  //     title: "Error",
+  //     description: "bla bla bla",
+  //     variant: "destructive"
+  //   })
+  // }
   return (
    <form onSubmit={handleSubmit(handleFormSubmit)} className='startup-form'>
       <div>
